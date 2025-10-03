@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
-import { EnhancedProgressTracker } from "@/components/EnhancedProgressTracker";
+import { SuperProgressTracker } from "@/components/SuperProgressTracker";
 import { useAuth } from "@/hooks/useAuth";
-import { Trophy } from "lucide-react";
+import { Trophy, TrendingUp, Target, Award } from "lucide-react";
 
 const ProgressOverview = () => {
   const { user } = useAuth();
@@ -10,19 +10,30 @@ const ProgressOverview = () => {
 
   return (
     <div className="space-y-8">
-      {/* Page Header */}
-      <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-yellow-500/10">
-          <Trophy className="h-5 w-5 text-yellow-500" />
+      {/* Enhanced Page Header */}
+      <div className="relative">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-200">
+            <Trophy className="h-6 w-6 text-yellow-600" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-foreground bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+              Progress & Achievements
+            </h1>
+            <p className="text-muted-foreground">Track your eco-journey with detailed insights and gamified milestones</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Progress & Achievements</h1>
-          <p className="text-muted-foreground">Track your eco-journey milestones and rewards</p>
+        
+        {/* Quick Stats Icons */}
+        <div className="absolute right-0 top-0 flex gap-2 opacity-20">
+          <TrendingUp className="h-8 w-8 text-green-500" />
+          <Target className="h-8 w-8 text-blue-500" />
+          <Award className="h-8 w-8 text-purple-500" />
         </div>
       </div>
 
-      {/* Progress Tracker */}
-      <EnhancedProgressTracker userId={user.id} />
+      {/* Super Progress Tracker */}
+      <SuperProgressTracker userId={user.id} />
     </div>
   );
 };
