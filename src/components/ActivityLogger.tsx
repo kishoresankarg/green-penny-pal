@@ -1,150 +1,156 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Car, Utensils, ShoppingBag, Zap, Plus } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
-export const ActivityLogger = () => {
-  const [selectedTab, setSelectedTab] = useState("travel");
+const activityTypes = {
+  travel: {
+    icon: Car,
+    options: ["Car", "Bike", "Public Transport", "Walking"],
+    co2Factors: { Car: 0.21, Bike: 0.02, "Public Transport": 0.07, Walking: 0 },
+    costFactors: { Car: 8, Bike: 0.5, "Public Transport": 2, Walking: 0 },
+  },
+  food: {
+    icon: Utensils,
+    options: ["Meat", "Vegetarian", "Vegan", "Local Produce"],
+    co2Factors: { Meat: 2.5, Vegetarian: 0.8, Vegan: 0.5, "Local Produce": 0.3 },
+    costFactors: { Meat: 150, Vegetarian: 80, Vegan: 60, "Local Produce": 50 },
+  },
+  shopping: {
+    icon: ShoppingBag,
+    options: ["New Clothes", "Second-hand", "Electronics", "Reusable Items"],
+    co2Factors: { "New Clothes": 5, "Second-hand": 0.5, Electronics: 10, "Reusable Items": 0.2 },
+    costFactors: { "New Clothes": 500, "Second-hand": 150, Electronics: 2000, "Reusable Items": 100 },
+  },
+  energy: {
+    icon: Zap,
+    options: ["Electricity", "LED Lights", "Solar Power", "Energy Efficient"],
+    co2Factors: { Electricity: 0.5, "LED Lights": 0.1, "Solar Power": 0.02, "Energy Efficient": 0.15 },
+    costFactors: { Electricity: 6, "LED Lights": 2, "Solar Power": 1, "Energy Efficient": 3 },
+  },
+};
 
-  const handleLogActivity = (category: string) => {
-    toast.success(`${category} activity logged!`, {
-      description: "Your eco and finance scores have been updated.",
-    });
+type Category = keyof typeof activityTypes;
+
+interface ActivityLoggerProps {
+  userId: string;
+  onActivityLogged?: () => void;
+}
+
+export const ActivityLogger = ({ userId, onActivityLogged }: ActivityLoggerProps) => {
+  const [selectedCategory, setSelectedCategory] = useState<Category>("travel");
+  const [selectedType, setSelectedType] = useState("");
+  const [amount, setAmount] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleLog = async () => {
+    if (!selectedType || !amount) {
+      toast({
+        title: "Missing Information",
+        description: "Please select activity type and enter amount",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    const co2Impact =
+      parseFloat(amount) * activityTypes[selectedCategory].co2Factors[selectedType as keyof typeof activityTypes[typeof selectedCategory]['co2Factors']];
+    const financialImpact =
+      parseFloat(amount) * activityTypes[selectedCategory].costFactors[selectedType as keyof typeof activityTypes[typeof selectedCategory]['costFactors']];
+
+    try {
+      const { error } = await supabase.from("activities").insert({
+        user_id: userId,
+        category: selectedCategory,
+        activity_type: selectedType,
+        amount: parseFloat(amount),
+        co2_impact: co2Impact,
+        financial_impact: financialImpact,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Activity Logged!",
+        description: `Saved ${co2Impact.toFixed(2)}kg CO₂ and ₹${financialImpact.toFixed(0)}`,
+      });
+
+      setSelectedType("");
+      setAmount("");
+      onActivityLogged?.();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Card className="p-6 shadow-card">
-      <div className="flex items-center gap-2 mb-6">
-        <Plus className="h-5 w-5 text-primary" />
-        <h2 className="text-2xl font-bold text-foreground">Log Activity</h2>
-      </div>
+      <h2 className="text-2xl font-bold text-foreground mb-6">Log Your Activities</h2>
 
-      <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="travel" className="gap-2">
-            <Car className="h-4 w-4" />
-            Travel
-          </TabsTrigger>
-          <TabsTrigger value="food" className="gap-2">
-            <Utensils className="h-4 w-4" />
-            Food
-          </TabsTrigger>
-          <TabsTrigger value="shopping" className="gap-2">
-            <ShoppingBag className="h-4 w-4" />
-            Shopping
-          </TabsTrigger>
-          <TabsTrigger value="energy" className="gap-2">
-            <Zap className="h-4 w-4" />
-            Energy
-          </TabsTrigger>
+      <Tabs value={selectedCategory} onValueChange={(v) => setSelectedCategory(v as Category)}>
+        <TabsList className="grid grid-cols-4 mb-6">
+          {Object.keys(activityTypes).map((category) => {
+            const Icon = activityTypes[category as Category].icon;
+            return (
+              <TabsTrigger key={category} value={category} className="flex gap-2">
+                <Icon className="h-4 w-4" />
+                <span className="capitalize">{category}</span>
+              </TabsTrigger>
+            );
+          })}
         </TabsList>
 
-        <TabsContent value="travel" className="space-y-4 mt-4">
-          <div className="space-y-2">
-            <Label htmlFor="travel-mode">Travel Mode</Label>
-            <Select>
-              <SelectTrigger id="travel-mode">
-                <SelectValue placeholder="Select travel mode" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="walk">Walking</SelectItem>
-                <SelectItem value="bike">Bicycle</SelectItem>
-                <SelectItem value="public">Public Transport</SelectItem>
-                <SelectItem value="car">Car</SelectItem>
-                <SelectItem value="flight">Flight</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="distance">Distance (km)</Label>
-            <Input id="distance" type="number" placeholder="Enter distance" />
-          </div>
-          <Button onClick={() => handleLogActivity("Travel")} className="w-full">
-            Log Travel
-          </Button>
-        </TabsContent>
+        {Object.entries(activityTypes).map(([category, data]) => (
+          <TabsContent key={category} value={category} className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Type</label>
+              <Select value={selectedType} onValueChange={setSelectedType}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select activity type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {data.options.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-        <TabsContent value="food" className="space-y-4 mt-4">
-          <div className="space-y-2">
-            <Label htmlFor="meal-type">Meal Type</Label>
-            <Select>
-              <SelectTrigger id="meal-type">
-                <SelectValue placeholder="Select meal type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="vegan">Vegan</SelectItem>
-                <SelectItem value="vegetarian">Vegetarian</SelectItem>
-                <SelectItem value="pescatarian">Pescatarian</SelectItem>
-                <SelectItem value="meat">Meat-based</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="cost">Cost (₹)</Label>
-            <Input id="cost" type="number" placeholder="Enter cost" />
-          </div>
-          <Button onClick={() => handleLogActivity("Food")} className="w-full">
-            Log Meal
-          </Button>
-        </TabsContent>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">
+                Amount ({category === "travel" ? "km" : category === "energy" ? "kWh" : "units"})
+              </label>
+              <Input
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="Enter amount"
+                min="0"
+                step="0.1"
+              />
+            </div>
 
-        <TabsContent value="shopping" className="space-y-4 mt-4">
-          <div className="space-y-2">
-            <Label htmlFor="item-type">Item Type</Label>
-            <Select>
-              <SelectTrigger id="item-type">
-                <SelectValue placeholder="Select item type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="reusable">Reusable Item</SelectItem>
-                <SelectItem value="secondhand">Second-hand</SelectItem>
-                <SelectItem value="local">Local Product</SelectItem>
-                <SelectItem value="new">New Item</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="amount">Amount (₹)</Label>
-            <Input id="amount" type="number" placeholder="Enter amount" />
-          </div>
-          <Button onClick={() => handleLogActivity("Shopping")} className="w-full">
-            Log Purchase
-          </Button>
-        </TabsContent>
-
-        <TabsContent value="energy" className="space-y-4 mt-4">
-          <div className="space-y-2">
-            <Label htmlFor="energy-type">Energy Source</Label>
-            <Select>
-              <SelectTrigger id="energy-type">
-                <SelectValue placeholder="Select energy source" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="solar">Solar</SelectItem>
-                <SelectItem value="wind">Wind</SelectItem>
-                <SelectItem value="grid">Grid</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="usage">Usage (kWh)</Label>
-            <Input id="usage" type="number" placeholder="Enter usage" />
-          </div>
-          <Button onClick={() => handleLogActivity("Energy")} className="w-full">
-            Log Energy
-          </Button>
-        </TabsContent>
+            <Button onClick={handleLog} className="w-full" disabled={loading}>
+              <Plus className="h-4 w-4 mr-2" />
+              {loading ? "Logging..." : "Log Activity"}
+            </Button>
+          </TabsContent>
+        ))}
       </Tabs>
     </Card>
   );
