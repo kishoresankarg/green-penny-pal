@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
+import { MobileNavigation } from "@/components/MobileNavigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserStats } from "@/hooks/useUserStats";
 
@@ -52,14 +53,14 @@ export const Layout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar 
         user={user} 
         onSignOut={signOut}
         notifications={3} // Could be dynamic based on unread notifications
       />
       
-      <main className="container mx-auto px-4 py-8 max-w-7xl">
+      <main className="flex-1 container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-7xl w-full pb-16 md:pb-8">
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/track" element={<TrackActivities />} />
@@ -73,6 +74,9 @@ export const Layout = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
+      
+      {/* Mobile Bottom Navigation */}
+      <MobileNavigation />
     </div>
   );
 };

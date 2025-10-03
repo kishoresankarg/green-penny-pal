@@ -84,69 +84,70 @@ export const SuperProgressTracker = ({ userId }: SuperProgressTrackerProps) => {
     : progress_data;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Hero Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="p-6 bg-gradient-to-br from-green-50 to-emerald-100 border-green-200">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+        <Card className="p-3 sm:p-6 bg-gradient-to-br from-green-50 to-emerald-100 border-green-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-green-700">Total CO₂ Saved</p>
-              <p className="text-2xl font-bold text-green-900">{total_stats.total_co2_saved.toFixed(1)} kg</p>
+              <p className="text-xs sm:text-sm font-medium text-green-700">Total CO₂ Saved</p>
+              <p className="text-lg sm:text-2xl font-bold text-green-900">{total_stats.total_co2_saved.toFixed(1)} kg</p>
             </div>
-            <Zap className="h-8 w-8 text-green-600" />
+            <Zap className="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
           </div>
         </Card>
 
-        <Card className="p-6 bg-gradient-to-br from-blue-50 to-cyan-100 border-blue-200">
+        <Card className="p-3 sm:p-6 bg-gradient-to-br from-blue-50 to-cyan-100 border-blue-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-blue-700">Money Saved</p>
-              <p className="text-2xl font-bold text-blue-900">₹{total_stats.total_money_saved.toLocaleString()}</p>
+              <p className="text-xs sm:text-sm font-medium text-blue-700">Money Saved</p>
+              <p className="text-lg sm:text-2xl font-bold text-blue-900">₹{total_stats.total_money_saved.toLocaleString()}</p>
             </div>
-            <Star className="h-8 w-8 text-blue-600" />
+            <Star className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
           </div>
         </Card>
 
-        <Card className="p-6 bg-gradient-to-br from-orange-50 to-yellow-100 border-orange-200">
+        <Card className="p-3 sm:p-6 bg-gradient-to-br from-orange-50 to-yellow-100 border-orange-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-orange-700">Current Streak</p>
-              <p className="text-2xl font-bold text-orange-900">{total_stats.current_streak} days</p>
+              <p className="text-xs sm:text-sm font-medium text-orange-700">Current Streak</p>
+              <p className="text-lg sm:text-2xl font-bold text-orange-900">{total_stats.current_streak} days</p>
               <p className="text-xs text-orange-600">Active: {total_stats.days_active} days</p>
             </div>
-            <Flame className="h-8 w-8 text-orange-600" />
+            <Flame className="h-6 w-6 sm:h-8 sm:w-8 text-orange-600" />
           </div>
         </Card>
 
-        <Card className="p-6 bg-gradient-to-br from-purple-50 to-pink-100 border-purple-200">
+        <Card className="p-3 sm:p-6 bg-gradient-to-br from-purple-50 to-pink-100 border-purple-200 col-span-2 lg:col-span-1">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-purple-700">Eco Level</p>
-              <p className="text-2xl font-bold text-purple-900">{Math.floor(total_stats.average_eco_score / 10)}</p>
+              <p className="text-xs sm:text-sm font-medium text-purple-700">Eco Level</p>
+              <p className="text-lg sm:text-2xl font-bold text-purple-900">{Math.floor(total_stats.average_eco_score / 10)}</p>
               <p className="text-xs text-purple-600">{total_stats.average_eco_score.toFixed(0)} XP</p>
             </div>
-            <Trophy className="h-8 w-8 text-purple-600" />
+            <Trophy className="h-6 w-6 sm:h-8 sm:w-8 text-purple-600" />
           </div>
         </Card>
       </div>
 
       {/* Weekly Trends */}
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-primary" />
+      <Card className="p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+          <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2">
+            <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
             Weekly Trends
           </h3>
           <Button 
             variant="outline" 
             size="sm"
             onClick={refetch}
+            className="self-start sm:self-auto"
           >
             Refresh
           </Button>
         </div>
         
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
           <div className="p-4 border rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-muted-foreground">Activities</span>
@@ -207,30 +208,34 @@ export const SuperProgressTracker = ({ userId }: SuperProgressTrackerProps) => {
 
       {/* Detailed Tabs */}
       <Tabs defaultValue="goals" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="goals">
-            <Target className="h-4 w-4 mr-2" />
-            Goals
+        <TabsList className="grid w-full grid-cols-4 h-auto">
+          <TabsTrigger value="goals" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 sm:py-3 text-xs sm:text-sm">
+            <Target className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Goals</span>
+            <span className="sm:hidden">📋</span>
           </TabsTrigger>
-          <TabsTrigger value="insights">
-            <Lightbulb className="h-4 w-4 mr-2" />
-            Insights
+          <TabsTrigger value="insights" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 sm:py-3 text-xs sm:text-sm">
+            <Lightbulb className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Insights</span>
+            <span className="sm:hidden">💡</span>
           </TabsTrigger>
-          <TabsTrigger value="categories">
-            <BarChart3 className="h-4 w-4 mr-2" />
-            Categories
+          <TabsTrigger value="categories" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 sm:py-3 text-xs sm:text-sm">
+            <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Categories</span>
+            <span className="sm:hidden">📊</span>
           </TabsTrigger>
-          <TabsTrigger value="records">
-            <Award className="h-4 w-4 mr-2" />
-            Records
+          <TabsTrigger value="records" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 sm:py-3 text-xs sm:text-sm">
+            <Award className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Records</span>
+            <span className="sm:hidden">🏆</span>
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="goals" className="mt-6">
-          <Card className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">Active Goals</h3>
-              <Button variant="outline" size="sm">Add Goal</Button>
+        <TabsContent value="goals" className="mt-4 sm:mt-6">
+          <Card className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+              <h3 className="text-base sm:text-lg font-semibold">Active Goals</h3>
+              <Button variant="outline" size="sm" className="self-start sm:self-auto">Add Goal</Button>
             </div>
             
             {goals.length > 0 ? (
@@ -269,9 +274,9 @@ export const SuperProgressTracker = ({ userId }: SuperProgressTrackerProps) => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="insights" className="mt-6">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Personal Insights</h3>
+        <TabsContent value="insights" className="mt-4 sm:mt-6">
+          <Card className="p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold mb-4">Personal Insights</h3>
             
             {insights.length > 0 ? (
               <div className="space-y-4">
@@ -303,11 +308,11 @@ export const SuperProgressTracker = ({ userId }: SuperProgressTrackerProps) => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="categories" className="mt-6">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Category Performance</h3>
+        <TabsContent value="categories" className="mt-4 sm:mt-6">
+          <Card className="p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold mb-4">Category Performance</h3>
             
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
               {category_performance.map((categoryData) => (
                 <div key={categoryData.category} className="p-4 border rounded-lg">
                   <h4 className="font-medium mb-3">{categoryData.category}</h4>
@@ -337,19 +342,19 @@ export const SuperProgressTracker = ({ userId }: SuperProgressTrackerProps) => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="records" className="mt-6">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Personal Bests</h3>
+        <TabsContent value="records" className="mt-4 sm:mt-6">
+          <Card className="p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold mb-4">Personal Bests</h3>
             
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
               {personal_records.map((record) => (
-                <div key={record.id} className="p-4 border rounded-lg bg-gradient-to-r from-green-50 to-emerald-50">
+                <div key={record.id} className="p-3 sm:p-4 border rounded-lg bg-gradient-to-r from-green-50 to-emerald-50">
                   <div className="flex items-center gap-2 mb-2">
-                    <Award className="h-5 w-5 text-green-600" />
-                    <h4 className="font-medium">{record.description}</h4>
+                    <Award className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
+                    <h4 className="font-medium text-sm sm:text-base">{record.description}</h4>
                   </div>
-                  <p className="text-2xl font-bold text-green-700">{record.value} {record.unit}</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xl sm:text-2xl font-bold text-green-700">{record.value} {record.unit}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     {new Date(record.achieved_date).toLocaleDateString()}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">{record.category}</p>

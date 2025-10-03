@@ -135,36 +135,41 @@ export const Navbar = ({ user, onSignOut, notifications = 0 }: NavbarProps) => {
 
     if (mobile) {
       return (
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Link
             to={item.href}
             className={cn(
-              "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+              "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 min-h-[44px] touch-manipulation",
               isActive 
-                ? "bg-primary text-primary-foreground" 
-                : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                ? "bg-primary text-primary-foreground shadow-sm" 
+                : "text-foreground hover:text-primary hover:bg-accent/80 active:bg-accent"
             )}
             onClick={() => setMobileMenuOpen(false)}
           >
-            <item.icon className="h-4 w-4" />
-            {item.title}
+            <item.icon className="h-5 w-5 flex-shrink-0" />
+            <span className="flex-1">{item.title}</span>
+            {hasSubmenu && (
+              <span className="text-xs opacity-60">
+                {item.submenu.length}
+              </span>
+            )}
           </Link>
           {hasSubmenu && (
-            <div className="pl-6 space-y-1">
+            <div className="ml-4 pl-4 border-l-2 border-muted space-y-1">
               {item.submenu.map((subItem: any) => (
                 <Link
                   key={subItem.href}
                   to={subItem.href}
                   className={cn(
-                    "flex items-center gap-2 px-3 py-1 rounded-md text-xs transition-colors",
+                    "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-all duration-200 min-h-[40px] touch-manipulation",
                     isActivePath(subItem.href)
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-primary/15 text-primary font-medium"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50 active:bg-accent"
                   )}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <subItem.icon className="h-3 w-3" />
-                  {subItem.title}
+                  <subItem.icon className="h-4 w-4 flex-shrink-0" />
+                  <span className="flex-1">{subItem.title}</span>
                 </Link>
               ))}
             </div>
@@ -244,16 +249,16 @@ export const Navbar = ({ user, onSignOut, notifications = 0 }: NavbarProps) => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2">
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary">
+        <Link to="/" className="flex items-center space-x-2 min-w-0">
+          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary flex-shrink-0">
             <Leaf className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="hidden sm:inline-block font-bold text-xl bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <span className="hidden sm:inline-block font-bold text-xl bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent truncate">
             Green Penny Pal
           </span>
-          <span className="sm:hidden font-bold text-lg">GPP</span>
+          <span className="sm:hidden font-bold text-base text-primary">GPP</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -266,9 +271,9 @@ export const Navbar = ({ user, onSignOut, notifications = 0 }: NavbarProps) => {
         </NavigationMenu>
 
         {/* Right Side Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           {/* Notifications */}
-          <Button variant="ghost" size="sm" className="relative">
+          <Button variant="ghost" size="sm" className="relative h-9 w-9 sm:h-10 sm:w-10">
             <Bell className="h-4 w-4" />
             {notifications > 0 && (
               <Badge 
@@ -283,10 +288,10 @@ export const Navbar = ({ user, onSignOut, notifications = 0 }: NavbarProps) => {
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <Avatar className="h-8 w-8">
+              <Button variant="ghost" className="relative h-9 w-9 sm:h-10 sm:w-10 rounded-full p-0">
+                <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
                   <AvatarImage src={user?.avatar_url} alt={user?.full_name} />
-                  <AvatarFallback>
+                  <AvatarFallback className="text-sm font-medium">
                     {user?.full_name?.charAt(0) || user?.email?.charAt(0) || "U"}
                   </AvatarFallback>
                 </Avatar>
@@ -350,71 +355,75 @@ export const Navbar = ({ user, onSignOut, notifications = 0 }: NavbarProps) => {
           {/* Mobile Menu */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="sm">
-                <Menu className="h-4 w-4" />
+              <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-80">
-              <div className="flex flex-col h-full">
-                {/* Mobile Header */}
-                <div className="flex items-center justify-between py-4 border-b">
-                  <div className="flex items-center space-x-2">
-                    <div className="flex items-center justify-center w-6 h-6 rounded bg-primary">
-                      <Leaf className="h-4 w-4 text-primary-foreground" />
-                    </div>
-                    <span className="font-bold">Green Penny Pal</span>
+            <SheetContent side="right" className="w-[300px] sm:w-[350px] max-w-[85vw] p-0 flex flex-col">
+              {/* Mobile Header - Fixed */}
+              <div className="flex items-center justify-between p-4 border-b bg-background/95 backdrop-blur">
+                <div className="flex items-center space-x-2">
+                  <div className="flex items-center justify-center w-6 h-6 rounded bg-primary">
+                    <Leaf className="h-4 w-4 text-primary-foreground" />
+                  </div>
+                  <span className="font-bold">Green Penny Pal</span>
+                </div>
+              </div>
+
+              {/* Mobile User Info - Fixed */}
+              <div className="p-4 border-b bg-background/95 backdrop-blur">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={user?.avatar_url} />
+                    <AvatarFallback>
+                      {user?.full_name?.charAt(0) || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm truncate">
+                      {user?.full_name || "User"}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {user?.email}
+                    </p>
                   </div>
                 </div>
+              </div>
 
-                {/* Mobile User Info */}
-                <div className="py-4 border-b">
-                  <div className="flex items-center gap-3">
-                    <Avatar>
-                      <AvatarImage src={user?.avatar_url} />
-                      <AvatarFallback>
-                        {user?.full_name?.charAt(0) || "U"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <p className="font-medium text-sm">
-                        {user?.full_name || "User"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Mobile Navigation */}
-                <nav className="flex-1 py-4 space-y-2">
+              {/* Mobile Navigation - Scrollable */}
+              <nav className="flex-1 overflow-y-auto mobile-sidebar-nav overscroll-contain px-4 py-4">
+                <div className="space-y-2 pb-4">
                   {navigationItems.map((item) => (
                     <NavigationItem key={item.href} item={item} mobile />
                   ))}
-                </nav>
-
-                {/* Mobile Footer */}
-                <div className="border-t pt-4 space-y-2">
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start"
-                    onClick={() => {
-                      navigate("/settings");
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start text-red-600 hover:text-red-600 hover:bg-red-50"
-                    onClick={() => {
-                      onSignOut();
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Log out
-                  </Button>
                 </div>
+              </nav>
+
+              {/* Mobile Footer - Fixed */}
+              <div className="border-t bg-background/95 backdrop-blur p-4 space-y-2">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start h-10"
+                  onClick={() => {
+                    navigate("/settings");
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  <Settings className="mr-3 h-4 w-4" />
+                  Settings
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start h-10 text-red-600 hover:text-red-600 hover:bg-red-50"
+                  onClick={() => {
+                    onSignOut();
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  <LogOut className="mr-3 h-4 w-4" />
+                  Log out
+                </Button>
               </div>
             </SheetContent>
           </Sheet>

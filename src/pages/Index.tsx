@@ -10,16 +10,16 @@ const Index = () => {
   if (!user) return null;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-8">
       <DashboardHeader userId={user.id} onSignOut={() => {}} />
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div className="space-y-6">
+      <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
+        <div className="space-y-4 sm:space-y-6 order-2 lg:order-1">
           <ActivityLogger userId={user.id} onActivityLogged={() => window.location.reload()} />
           <ProgressTracker userId={user.id} />
         </div>
 
-        <div>
+        <div className="order-1 lg:order-2">
           <EcoSuggestions userId={user.id} />
         </div>
       </div>

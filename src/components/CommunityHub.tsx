@@ -139,20 +139,20 @@ export const CommunityHub = ({ userId }: CommunityHubProps) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Community Stats Header */}
-      <Card className="p-6 bg-gradient-to-r from-green-500/10 to-blue-500/10">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <Users className="h-6 w-6" />
+      <Card className="p-4 sm:p-6 bg-gradient-to-r from-green-500/10 to-blue-500/10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
+            <Users className="h-5 w-5 sm:h-6 sm:w-6" />
             Community Hub
           </h2>
-          <Badge variant="secondary" className="text-lg px-3 py-1">
+          <Badge variant="secondary" className="text-sm sm:text-lg px-2 sm:px-3 py-1 self-start sm:self-auto">
             Global Rank #{userStats?.globalRank || "Loading..."}
           </Badge>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-primary">{userStats?.localRank || 0}</div>
             <div className="text-sm text-muted-foreground">Local Rank</div>
@@ -174,55 +174,59 @@ export const CommunityHub = ({ userId }: CommunityHubProps) => {
 
       {/* Main Community Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="leaderboard">
-            <Trophy className="h-4 w-4 mr-2" />
-            Leaderboard
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
+          <TabsTrigger value="leaderboard" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 sm:py-3 text-xs sm:text-sm">
+            <Trophy className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Leaderboard</span>
+            <span className="sm:hidden">🏆</span>
           </TabsTrigger>
-          <TabsTrigger value="challenges">
-            <Target className="h-4 w-4 mr-2" />
-            Challenges
+          <TabsTrigger value="challenges" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 sm:py-3 text-xs sm:text-sm">
+            <Target className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Challenges</span>
+            <span className="sm:hidden">🎯</span>
           </TabsTrigger>
-          <TabsTrigger value="social">
-            <Share2 className="h-4 w-4 mr-2" />
-            Social Feed
+          <TabsTrigger value="social" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 sm:py-3 text-xs sm:text-sm">
+            <Share2 className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Social Feed</span>
+            <span className="sm:hidden">💬</span>
           </TabsTrigger>
-          <TabsTrigger value="impact">
-            <Globe className="h-4 w-4 mr-2" />
-            Global Impact
+          <TabsTrigger value="impact" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 sm:py-3 text-xs sm:text-sm">
+            <Globe className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Global Impact</span>
+            <span className="sm:hidden">🌍</span>
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="leaderboard" className="mt-6">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Top Eco Champions</h3>
+        <TabsContent value="leaderboard" className="mt-4 sm:mt-6">
+          <Card className="p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold mb-4">Top Eco Champions</h3>
             <div className="space-y-4">
               {leaderboard.map((entry, index) => (
-                <div key={entry.id} className={`flex items-center gap-4 p-4 rounded-lg ${
+                <div key={entry.id} className={`flex items-center gap-2 sm:gap-4 p-3 sm:p-4 rounded-lg ${
                   entry.id === userId ? 'bg-primary/10 border-2 border-primary/20' : 'bg-accent/5'
                 }`}>
-                  <div className="text-2xl font-bold text-muted-foreground w-8">
+                  <div className="text-lg sm:text-2xl font-bold text-muted-foreground w-6 sm:w-8">
                     #{index + 1}
                   </div>
                   
-                  <Avatar>
+                  <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
                     <AvatarImage src={entry.avatar_url || '/avatars/default.png'} />
                     <AvatarFallback>{(entry.display_name || entry.username).slice(0, 2).toUpperCase()}</AvatarFallback>
                   </Avatar>
                   
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-medium text-foreground">{entry.display_name || entry.username}</h4>
-                      <Badge variant="outline">{entry.badges[0] || '🌱 Eco Warrior'}</Badge>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                      <h4 className="font-medium text-foreground text-sm sm:text-base truncate">{entry.display_name || entry.username}</h4>
+                      <Badge variant="outline" className="text-xs self-start sm:self-auto">{entry.badges[0] || '🌱 Eco Warrior'}</Badge>
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      Level {entry.level} • {entry.co2_saved}kg CO₂ saved • {entry.streak_days} day streak
+                    <div className="text-xs sm:text-sm text-muted-foreground">
+                      Level {entry.level} • {entry.co2_saved}kg CO₂ • {entry.streak_days}d streak
                     </div>
                   </div>
                   
                   <div className="text-right">
-                    <div className="text-lg font-bold text-primary">{entry.eco_score.toLocaleString()}</div>
-                    <div className="text-xs text-muted-foreground">Eco Points</div>
+                    <div className="text-sm sm:text-lg font-bold text-primary">{entry.eco_score.toLocaleString()}</div>
+                    <div className="text-xs text-muted-foreground">Points</div>
                   </div>
                 </div>
               ))}
@@ -230,10 +234,10 @@ export const CommunityHub = ({ userId }: CommunityHubProps) => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="challenges" className="mt-6">
-          <div className="space-y-6">
+        <TabsContent value="challenges" className="mt-4 sm:mt-6">
+          <div className="space-y-4 sm:space-y-6">
             {challenges.map(challenge => (
-              <Card key={challenge.id} className="p-6">
+              <Card key={challenge.id} className="p-4 sm:p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-lg font-semibold text-foreground">{challenge.title}</h3>
@@ -275,10 +279,10 @@ export const CommunityHub = ({ userId }: CommunityHubProps) => {
           </div>
         </TabsContent>
 
-        <TabsContent value="social" className="mt-6">
-          <div className="space-y-6">
+        <TabsContent value="social" className="mt-4 sm:mt-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Create Post */}
-            <Card className="p-4">
+            <Card className="p-3 sm:p-4">
               <div className="flex gap-3">
                 <Avatar>
                   <AvatarFallback>You</AvatarFallback>
@@ -301,22 +305,22 @@ export const CommunityHub = ({ userId }: CommunityHubProps) => {
 
             {/* Social Feed */}
             {socialFeed.map(post => (
-              <Card key={post.id} className="p-4">
-                <div className="flex gap-3">
-                  <Avatar>
+              <Card key={post.id} className="p-3 sm:p-4">
+                <div className="flex gap-2 sm:gap-3">
+                  <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
                     <AvatarImage src={post.user_profile?.avatar_url} />
                     <AvatarFallback>{post.user_profile?.username?.slice(0, 2).toUpperCase() || 'U'}</AvatarFallback>
                   </Avatar>
                   
-                  <div className="flex-1 space-y-3">
+                  <div className="flex-1 space-y-2 sm:space-y-3 min-w-0">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-medium text-foreground">{post.user_profile?.username}</h4>
+                        <h4 className="font-medium text-foreground text-sm sm:text-base">{post.user_profile?.username}</h4>
                         <span className="text-xs text-muted-foreground">
                           {new Date(post.created_at).toLocaleDateString()}
                         </span>
                       </div>
-                      <p className="text-foreground">{post.content}</p>
+                      <p className="text-foreground text-sm sm:text-base">{post.content}</p>
                     </div>
                     
                     {post.achievement_data && (
