@@ -274,149 +274,161 @@ const TrackActivities = () => {
   if (!user) return null;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-6 lg:space-y-8">
       {/* Page Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80">
-            <Plus className="h-6 w-6 text-white" />
+          <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80">
+            <Plus className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Track Activities</h1>
-            <p className="text-muted-foreground">Log, manage, and optimize your eco-friendly journey</p>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">Track Activities</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">Log, manage, and optimize your eco-friendly journey</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="flex items-center gap-1">
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <Badge variant="secondary" className="flex items-center gap-1 px-2 py-1">
             <Award className="h-3 w-3" />
-            {currentStreak} day streak
+            <span className="text-xs sm:text-sm">{currentStreak} day streak</span>
           </Badge>
         </div>
       </div>
 
       {/* Today's Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-3">
+        <Card className="p-4 sm:p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold text-blue-900">
+              <div className="text-xl sm:text-2xl font-bold text-blue-900">
                 {loading ? '...' : todayStats.activities}
               </div>
-              <div className="text-sm text-blue-700">Activities Today</div>
+              <div className="text-xs sm:text-sm text-blue-700">Activities Today</div>
             </div>
-            <Clock className="h-8 w-8 text-blue-500" />
+            <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500" />
           </div>
         </Card>
         
-        <Card className="p-6 bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+        <Card className="p-4 sm:p-6 bg-gradient-to-br from-green-50 to-green-100 border-green-200">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold text-green-900">
+              <div className="text-xl sm:text-2xl font-bold text-green-900">
                 {loading ? '...' : `${todayStats.co2.toFixed(1)}kg`}
               </div>
-              <div className="text-sm text-green-700">CO₂ Saved Today</div>
+              <div className="text-xs sm:text-sm text-green-700">CO₂ Saved Today</div>
             </div>
-            <TrendingUp className="h-8 w-8 text-green-500" />
+            <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
           </div>
         </Card>
         
-        <Card className="p-6 bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+        <Card className="p-4 sm:p-6 bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold text-orange-900">
+              <div className="text-xl sm:text-2xl font-bold text-orange-900">
                 ₹{loading ? '...' : todayStats.money.toFixed(0)}
               </div>
-              <div className="text-sm text-orange-700">Saved Today</div>
+              <div className="text-xs sm:text-sm text-orange-700">Saved Today</div>
             </div>
-            <div className="h-8 w-8 rounded-full bg-orange-200 flex items-center justify-center">
-              <span className="text-orange-600 font-bold text-sm">₹</span>
+            <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-orange-200 flex items-center justify-center">
+              <span className="text-orange-600 font-bold text-xs sm:text-sm">₹</span>
             </div>
           </div>
         </Card>
       </div>
 
       <Tabs defaultValue="log" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="log">Log Activity</TabsTrigger>
-          <TabsTrigger value="quick">Quick Actions</TabsTrigger>
-          <TabsTrigger value="history">Recent History</TabsTrigger>
-          <TabsTrigger value="templates">Templates</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
+          <TabsTrigger value="log" className="text-xs sm:text-sm py-2 sm:py-3">
+            <span className="hidden sm:inline">Log Activity</span>
+            <span className="sm:hidden">📝 Log</span>
+          </TabsTrigger>
+          <TabsTrigger value="quick" className="text-xs sm:text-sm py-2 sm:py-3">
+            <span className="hidden sm:inline">Quick Actions</span>
+            <span className="sm:hidden">⚡ Quick</span>
+          </TabsTrigger>
+          <TabsTrigger value="history" className="text-xs sm:text-sm py-2 sm:py-3">
+            <span className="hidden sm:inline">Recent History</span>
+            <span className="sm:hidden">📊 History</span>
+          </TabsTrigger>
+          <TabsTrigger value="templates" className="text-xs sm:text-sm py-2 sm:py-3">
+            <span className="hidden sm:inline">Templates</span>
+            <span className="sm:hidden">📋 Templates</span>
+          </TabsTrigger>
         </TabsList>
         
-        <TabsContent value="log" className="mt-6">
+        <TabsContent value="log" className="mt-4 sm:mt-6">
           <ActivityLogger userId={user.id} onActivityLogged={() => {
             fetchRecentActivities();
             fetchTodayStats();
           }} />
         </TabsContent>
         
-        <TabsContent value="quick" className="mt-6">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Zap className="h-5 w-5 text-yellow-500" />
+        <TabsContent value="quick" className="mt-4 sm:mt-6">
+          <Card className="p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 flex items-center gap-2">
+              <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500" />
               Quick Actions
             </h3>
-            <p className="text-sm text-muted-foreground mb-6">
+            <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6">
               One-click logging for your most common eco-friendly activities
             </p>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
               {quickActions.map((action, index) => (
                 <Button
                   key={index}
                   variant="outline"
                   onClick={() => logQuickActivity(action)}
-                  className="h-32 flex flex-col items-center gap-2 hover:scale-105 transition-all duration-200 hover:shadow-md p-4"
+                  className="h-24 sm:h-32 flex flex-col items-center gap-1 sm:gap-2 hover:scale-105 transition-all duration-200 hover:shadow-md p-2 sm:p-4 text-center"
                 >
-                  <div className={`h-10 w-10 rounded-xl ${action.color} flex items-center justify-center shadow-sm`}>
-                    <action.icon className="h-5 w-5 text-white" />
+                  <div className={`h-6 w-6 sm:h-10 sm:w-10 rounded-lg sm:rounded-xl ${action.color} flex items-center justify-center shadow-sm`}>
+                    <action.icon className="h-3 w-3 sm:h-5 sm:w-5 text-white" />
                   </div>
-                  <span className="text-sm font-medium text-center">{action.name}</span>
-                  <span className="text-xs text-muted-foreground text-center leading-tight">
+                  <span className="text-xs sm:text-sm font-medium text-center leading-tight">{action.name}</span>
+                  <span className="text-xs text-muted-foreground text-center leading-tight hidden sm:block">
                     {action.description}
                   </span>
                 </Button>
               ))}
             </div>
-            <div className="mt-6 p-4 bg-muted/30 rounded-lg">
-              <p className="text-sm text-muted-foreground">
+            <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-muted/30 rounded-lg">
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 💡 <strong>Tip:</strong> Click any action above to instantly log it with calculated CO₂ and cost savings!
               </p>
             </div>
           </Card>
         </TabsContent>
         
-        <TabsContent value="history" className="mt-6">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <History className="h-5 w-5 text-blue-500" />
+        <TabsContent value="history" className="mt-4 sm:mt-6">
+          <Card className="p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 flex items-center gap-2">
+              <History className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
               Recent Activities
             </h3>
             {recentActivities.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">
+              <p className="text-center text-muted-foreground py-6 sm:py-8 text-sm sm:text-base">
                 No activities logged yet. Start tracking to see your history!
               </p>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {recentActivities.map((activity: any, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                    <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <div key={index} className="flex items-center justify-between p-2 sm:p-3 rounded-lg bg-muted/30">
+                    <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                      <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                         <span className="text-xs font-medium text-primary">
                           {activity.category?.charAt(0).toUpperCase()}
                         </span>
                       </div>
-                      <div>
-                        <div className="font-medium">{activity.activity_type}</div>
-                        <div className="text-sm text-muted-foreground">
+                      <div className="min-w-0 flex-1">
+                        <div className="font-medium text-sm sm:text-base truncate">{activity.activity_type}</div>
+                        <div className="text-xs sm:text-sm text-muted-foreground">
                           {new Date(activity.created_at).toLocaleDateString()}
                         </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-sm font-medium text-green-600">
+                    <div className="text-right flex-shrink-0">
+                      <div className="text-xs sm:text-sm font-medium text-green-600">
                         -{activity.co2_impact?.toFixed(1)}kg CO₂
                       </div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-xs sm:text-sm text-muted-foreground">
                         ₹{activity.financial_impact?.toFixed(0)}
                       </div>
                     </div>
@@ -427,35 +439,35 @@ const TrackActivities = () => {
           </Card>
         </TabsContent>
         
-        <TabsContent value="templates" className="mt-6">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Target className="h-5 w-5 text-purple-500" />
+        <TabsContent value="templates" className="mt-4 sm:mt-6">
+          <Card className="p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 flex items-center gap-2">
+              <Target className="h-4 w-4 sm:h-5 sm:w-5 text-purple-500" />
               Activity Templates
             </h3>
-            <p className="text-sm text-muted-foreground mb-6">
+            <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6">
               Pre-built activity sets for common scenarios. Click to log all activities at once.
             </p>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               {activityTemplates.map((template, index) => (
-                <Card key={index} className="p-5 hover:shadow-lg transition-all duration-200 hover:scale-105 border-2 hover:border-primary/20">
-                  <div className="text-center mb-4">
-                    <div className="text-3xl mb-2">{template.icon}</div>
-                    <h4 className="font-semibold text-lg">{template.name}</h4>
-                    <p className="text-sm text-muted-foreground">{template.description}</p>
+                <Card key={index} className="p-3 sm:p-5 hover:shadow-lg transition-all duration-200 hover:scale-105 border-2 hover:border-primary/20">
+                  <div className="text-center mb-3 sm:mb-4">
+                    <div className="text-2xl sm:text-3xl mb-1 sm:mb-2">{template.icon}</div>
+                    <h4 className="font-semibold text-sm sm:text-lg">{template.name}</h4>
+                    <p className="text-xs sm:text-sm text-muted-foreground">{template.description}</p>
                   </div>
                   
-                  <div className="space-y-3 mb-4">
+                  <div className="space-y-2 sm:space-y-3 mb-3 sm:mb-4">
                     <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                       Includes:
                     </div>
                     {template.activities.map((activity, actIndex) => (
-                      <div key={actIndex} className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-2">
-                          <span className="h-2 w-2 rounded-full bg-primary/60"></span>
-                          <span>{activity.name}</span>
+                      <div key={actIndex} className="flex items-center justify-between text-xs sm:text-sm">
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-primary/60 flex-shrink-0"></span>
+                          <span className="truncate">{activity.name}</span>
                         </div>
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-xs flex-shrink-0 ml-2">
                           {activity.amount}x
                         </Badge>
                       </div>
@@ -464,18 +476,18 @@ const TrackActivities = () => {
                   
                   <Button 
                     size="sm" 
-                    className="w-full" 
+                    className="w-full text-xs sm:text-sm" 
                     onClick={() => useTemplate(template)}
                   >
-                    <Plus className="h-4 w-4 mr-2" />
+                    <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                     Use Template
                   </Button>
                 </Card>
               ))}
             </div>
             
-            <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-100">
-              <p className="text-sm text-muted-foreground">
+            <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-100">
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 🎯 <strong>Templates help you log multiple related activities quickly!</strong> Each template 
                 calculates the total impact across all included activities.
               </p>

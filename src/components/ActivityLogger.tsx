@@ -97,16 +97,16 @@ export const ActivityLogger = ({ userId, onActivityLogged }: ActivityLoggerProps
   };
 
   return (
-    <Card className="p-6 shadow-card">
-      <h2 className="text-2xl font-bold text-foreground mb-6">Log Your Activities</h2>
+    <Card className="p-4 sm:p-6 shadow-card">
+      <h2 className="text-lg sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">Log Your Activities</h2>
 
       <Tabs value={selectedCategory} onValueChange={(v) => setSelectedCategory(v as Category)}>
-        <TabsList className="grid grid-cols-4 mb-6">
+        <TabsList className="grid grid-cols-2 sm:grid-cols-4 mb-4 sm:mb-6 h-auto">
           {Object.keys(activityTypes).map((category) => {
             const Icon = activityTypes[category as Category].icon;
             return (
-              <TabsTrigger key={category} value={category} className="flex gap-2">
-                <Icon className="h-4 w-4" />
+              <TabsTrigger key={category} value={category} className="flex flex-col sm:flex-row gap-1 sm:gap-2 py-2 sm:py-3 text-xs sm:text-sm">
+                <Icon className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="capitalize">{category}</span>
               </TabsTrigger>
             );
@@ -114,11 +114,11 @@ export const ActivityLogger = ({ userId, onActivityLogged }: ActivityLoggerProps
         </TabsList>
 
         {Object.entries(activityTypes).map(([category, data]) => (
-          <TabsContent key={category} value={category} className="space-y-4">
+          <TabsContent key={category} value={category} className="space-y-3 sm:space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Type</label>
+              <label className="text-xs sm:text-sm font-medium text-foreground">Type</label>
               <Select value={selectedType} onValueChange={setSelectedType}>
-                <SelectTrigger>
+                <SelectTrigger className="h-10 sm:h-11">
                   <SelectValue placeholder="Select activity type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -132,7 +132,7 @@ export const ActivityLogger = ({ userId, onActivityLogged }: ActivityLoggerProps
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">
+              <label className="text-xs sm:text-sm font-medium text-foreground">
                 Amount ({category === "travel" ? "km" : category === "energy" ? "kWh" : "units"})
               </label>
               <Input
@@ -142,11 +142,12 @@ export const ActivityLogger = ({ userId, onActivityLogged }: ActivityLoggerProps
                 placeholder="Enter amount"
                 min="0"
                 step="0.1"
+                className="h-10 sm:h-11"
               />
             </div>
 
-            <Button onClick={handleLog} className="w-full" disabled={loading}>
-              <Plus className="h-4 w-4 mr-2" />
+            <Button onClick={handleLog} className="w-full h-10 sm:h-11 text-sm sm:text-base" disabled={loading}>
+              <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
               {loading ? "Logging..." : "Log Activity"}
             </Button>
           </TabsContent>
