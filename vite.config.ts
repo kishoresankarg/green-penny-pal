@@ -5,9 +5,22 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  base: "/",
   server: {
     host: "::",
     port: 8080,
+    // Add historyApiFallback for SPA routing
+    historyApiFallback: {
+      index: '/index.html',
+    },
+  },
+  build: {
+    // Ensure proper build output for SPA
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
