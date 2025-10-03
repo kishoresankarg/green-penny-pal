@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserStats } from "@/hooks/useUserStats";
 
 // Import pages - using relative paths to avoid module resolution issues
 import Index from "../pages/Index";
@@ -13,10 +14,14 @@ import Community from "../pages/Community";
 import Insights from "../pages/Insights";
 import Profile from "../pages/Profile";
 import Settings from "../pages/Settings";
+import FinanceManager from "../pages/FinanceManager";
 
 export const Layout = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  
+  // Get dynamic user stats
+  const { currentLevel, currentStreak } = useUserStats(user?.id || '');
 
   useEffect(() => {
     if (!loading && !user) {
@@ -39,10 +44,10 @@ export const Layout = () => {
     return null;
   }
 
-  // Mock user level data (in real app, fetch from database)
+  // Dynamic user level data
   const userLevel = {
-    level: 6,
-    title: "Eco Warrior",
+    level: currentLevel,
+    title: currentLevel > 5 ? "Eco Warrior" : currentLevel > 3 ? "Green Guardian" : "Eco Beginner",
     icon: "🌿"
   };
 
@@ -51,9 +56,7 @@ export const Layout = () => {
       <Navbar 
         user={user} 
         onSignOut={signOut}
-        userLevel={userLevel}
-        notifications={3}
-        currentStreak={12}
+        notifications={3} // Could be dynamic based on unread notifications
       />
       
       <main className="container mx-auto px-4 py-8 max-w-7xl">
@@ -64,6 +67,7 @@ export const Layout = () => {
           <Route path="/progress/*" element={<Progress />} />
           <Route path="/community/*" element={<Community />} />
           <Route path="/insights" element={<Insights />} />
+          <Route path="/finance" element={<FinanceManager />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
