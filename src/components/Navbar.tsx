@@ -45,20 +45,15 @@ import {
   Zap,
   Calendar,
   Crown,
-  Flame
+  Flame,
+  Wallet
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavbarProps {
   user: any;
   onSignOut: () => void;
-  userLevel?: {
-    level: number;
-    title: string;
-    icon: string;
-  };
   notifications?: number;
-  currentStreak?: number;
 }
 
 const navigationItems = [
@@ -115,10 +110,16 @@ const navigationItems = [
     href: "/insights",
     icon: Lightbulb,
     description: "Personalized eco-suggestions"
+  },
+  {
+    title: "Finance Manager",
+    href: "/finance",
+    icon: Wallet,
+    description: "Manage your money and eco-savings"
   }
 ];
 
-export const Navbar = ({ user, onSignOut, userLevel, notifications = 0, currentStreak = 0 }: NavbarProps) => {
+export const Navbar = ({ user, onSignOut, notifications = 0 }: NavbarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -266,27 +267,6 @@ export const Navbar = ({ user, onSignOut, userLevel, notifications = 0, currentS
 
         {/* Right Side Actions */}
         <div className="flex items-center gap-2">
-          {/* User Stats (Desktop) */}
-          <div className="hidden lg:flex items-center gap-4 mr-4">
-            {userLevel && (
-              <div className="flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full">
-                <span className="text-lg">{userLevel.icon}</span>
-                <span className="text-xs font-medium text-primary">
-                  Level {userLevel.level}
-                </span>
-              </div>
-            )}
-            
-            {currentStreak > 0 && (
-              <div className="flex items-center gap-1 px-2 py-1 bg-orange-100 rounded-full">
-                <Flame className="h-3 w-3 text-orange-500" />
-                <span className="text-xs font-medium text-orange-700">
-                  {currentStreak}d
-                </span>
-              </div>
-            )}
-          </div>
-
           {/* Notifications */}
           <Button variant="ghost" size="sm" className="relative">
             <Bell className="h-4 w-4" />
@@ -325,23 +305,6 @@ export const Navbar = ({ user, onSignOut, userLevel, notifications = 0, currentS
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               
-              {/* Mobile Stats */}
-              <div className="lg:hidden">
-                <DropdownMenuGroup>
-                  {userLevel && (
-                    <DropdownMenuLabel className="text-xs text-muted-foreground">
-                      {userLevel.icon} {userLevel.title} (Level {userLevel.level})
-                    </DropdownMenuLabel>
-                  )}
-                  {currentStreak > 0 && (
-                    <DropdownMenuLabel className="text-xs text-muted-foreground">
-                      🔥 {currentStreak} day streak
-                    </DropdownMenuLabel>
-                  )}
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-              </div>
-
               <DropdownMenuGroup>
                 <DropdownMenuItem onClick={() => navigate("/profile")}>
                   <User className="mr-2 h-4 w-4" />
@@ -416,18 +379,6 @@ export const Navbar = ({ user, onSignOut, userLevel, notifications = 0, currentS
                       <p className="font-medium text-sm">
                         {user?.full_name || "User"}
                       </p>
-                      <div className="flex items-center gap-2 mt-1">
-                        {userLevel && (
-                          <Badge variant="secondary" className="text-xs">
-                            {userLevel.icon} L{userLevel.level}
-                          </Badge>
-                        )}
-                        {currentStreak > 0 && (
-                          <Badge variant="outline" className="text-xs">
-                            🔥 {currentStreak}d
-                          </Badge>
-                        )}
-                      </div>
                     </div>
                   </div>
                 </div>

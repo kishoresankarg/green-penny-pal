@@ -7,223 +7,44 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Users, Trophy, Share2, Heart, MessageCircle, Target, Globe, TrendingUp } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useCommunityData, createPost, likePost, unlikePost, joinChallenge, updateChallengeProgress } from "@/hooks/useCommunityData";
 
 interface CommunityHubProps {
   userId: string;
 }
 
-interface CommunityChallenge {
-  id: string;
-  title: string;
-  description: string;
-  goal: number;
-  currentProgress: number;
-  participants: number;
-  endDate: Date;
-  reward: string;
-  category: string;
-}
-
-interface LeaderboardEntry {
-  userId: string;
-  userName: string;
-  avatar: string;
-  score: number;
-  level: number;
-  co2Saved: number;
-  streak: number;
-  badge: string;
-}
-
-interface SocialPost {
-  id: string;
-  userId: string;
-  userName: string;
-  avatar: string;
-  content: string;
-  achievement?: any;
-  activity?: any;
-  likes: number;
-  comments: number;
-  timestamp: Date;
-  liked: boolean;
-}
-
 export const CommunityHub = ({ userId }: CommunityHubProps) => {
   const [activeTab, setActiveTab] = useState("leaderboard");
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [challenges, setChallenges] = useState<CommunityChallenge[]>([]);
-  const [socialFeed, setSocialFeed] = useState<SocialPost[]>([]);
-  const [userStats, setUserStats] = useState<any>(null);
   const [newPostContent, setNewPostContent] = useState("");
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchCommunityData();
-  }, [userId]);
+  // Use the dynamic community data hook
+  const {
+    posts: socialFeed,
+    challenges,
+    leaderboard,
+    userProfile,
+    userStats,
+    loading,
+    error,
+    refresh
+  } = useCommunityData(userId);
 
-  const fetchCommunityData = async () => {
-    await Promise.all([
-      fetchLeaderboard(),
-      fetchChallenges(),
-      fetchSocialFeed(),
-      fetchUserStats()
-    ]);
-  };
 
-  const fetchLeaderboard = async () => {
+
+  const handleJoinChallenge = async (challengeId: string) => {
     try {
-      // In a real implementation, this would be a complex query
-      // aggregating user statistics and calculating scores
-      const mockLeaderboard: LeaderboardEntry[] = [
-        {
-          userId: "1",
-          userName: "EcoChampion_Mumbai",
-          avatar: "/avatars/user1.png",
-          score: 2450,
-          level: 8,
-          co2Saved: 125.5,
-          streak: 23,
-          badge: "🌟 Eco Master"
-        },
-        {
-          userId: "2", 
-          userName: "GreenWarrior_Delhi",
-          avatar: "/avatars/user2.png",
-          score: 2320,
-          level: 7,
-          co2Saved: 98.2,
-          streak: 18,
-          badge: "🚲 Transport Hero"
-        },
-        {
-          userId: userId,
-          userName: "You",
-          avatar: "/avatars/current-user.png",
-          score: 1890,
-          level: 6,
-          co2Saved: 78.9,
-          streak: 12,
-          badge: "🌱 Rising Star"
-        }
-      ];
-      
-      setLeaderboard(mockLeaderboard);
-    } catch (error) {
-      console.error("Error fetching leaderboard:", error);
-    }
-  };
-
-  const fetchChallenges = async () => {
-    const mockChallenges: CommunityChallenge[] = [
-      {
-        id: "1",
-        title: "Plant-Based January",
-        description: "Community goal: 1000 plant-based meals this month",
-        goal: 1000,
-        currentProgress: 687,
-        participants: 156,
-        endDate: new Date('2025-01-31'),
-        reward: "Tree Planting Certificate + 500 XP",
-        category: "Food"
-      },
-      {
-        id: "2",
-        title: "Car-Free Week Challenge",
-        description: "Avoid using cars for one week. Use eco-friendly transport!",
-        goal: 500,
-        currentProgress: 342,
-        participants: 89,
-        endDate: new Date('2025-10-15'),
-        reward: "Cycling Champion Badge + 300 XP",
-        category: "Transport"
-      },
-      {
-        id: "3",
-        title: "Zero Waste Weekend",
-        description: "Minimize waste generation and choose reusable alternatives",
-        goal: 200,
-        currentProgress: 78,
-        participants: 45,
-        endDate: new Date('2025-10-07'),
-        reward: "Waste Warrior Badge + 200 XP",
-        category: "Lifestyle"
+      const success = await joinChallenge(challengeId, userId);
+      if (success) {
+        toast({
+          title: "Challenge Joined!",
+          description: "You're now part of this community challenge. Good luck!",
+        });
+        refresh(); // Refresh the data
+      } else {
+        throw new Error('Failed to join challenge');
       }
-    ];
-    
-    setChallenges(mockChallenges);
-  };
-
-  const fetchSocialFeed = async () => {
-    const mockFeed: SocialPost[] = [
-      {
-        id: "1",
-        userId: "user1",
-        userName: "EcoChampion_Mumbai",
-        avatar: "/avatars/user1.png",
-        content: "Just completed my 30-day cycling streak! 🚲 Saved 15kg CO₂ and ₹450 this month!",
-        achievement: { title: "Cycling Master", icon: "🚴‍♀️" },
-        likes: 24,
-        comments: 8,
-        timestamp: new Date('2025-10-02'),
-        liked: false
-      },
-      {
-        id: "2",
-        userId: "user2",
-        userName: "GreenWarrior_Delhi",
-        avatar: "/avatars/user2.png",
-        content: "Switched to solar power for my home! Initial investment but huge long-term savings 💡",
-        activity: { type: "Solar Power", impact: "8.5kg CO₂ saved" },
-        likes: 18,
-        comments: 5,
-        timestamp: new Date('2025-10-01'),
-        liked: true
-      },
-      {
-        id: "3",
-        userId: "user3",
-        userName: "PlantBasedPro",
-        avatar: "/avatars/user3.png",
-        content: "Week 4 of my plant-based journey! Feeling healthier and helping the planet 🌱",
-        likes: 31,
-        comments: 12,
-        timestamp: new Date('2025-09-30'),
-        liked: false
-      }
-    ];
-    
-    setSocialFeed(mockFeed);
-  };
-
-  const fetchUserStats = async () => {
-    // Fetch user's community stats
-    setUserStats({
-      globalRank: 1247,
-      localRank: 23,
-      challengesJoined: 5,
-      challengesCompleted: 2,
-      friendsCount: 12,
-      impactShared: 8
-    });
-  };
-
-  const joinChallenge = async (challengeId: string) => {
-    try {
-      // In real implementation, add user to challenge participants
-      toast({
-        title: "Challenge Joined!",
-        description: "You're now part of this community challenge. Good luck!",
-      });
-      
-      // Update local state
-      setChallenges(prev => prev.map(challenge => 
-        challenge.id === challengeId 
-          ? { ...challenge, participants: challenge.participants + 1 }
-          : challenge
-      ));
     } catch (error) {
       toast({
         title: "Error",
@@ -235,25 +56,22 @@ export const CommunityHub = ({ userId }: CommunityHubProps) => {
 
   const shareAchievement = async (achievement: any) => {
     try {
-      const post: SocialPost = {
-        id: Date.now().toString(),
-        userId,
-        userName: "You",
-        avatar: "/avatars/current-user.png",
+      const success = await createPost({
+        user_id: userId,
         content: `Just unlocked: ${achievement.title}! 🎉`,
-        achievement,
-        likes: 0,
-        comments: 0,
-        timestamp: new Date(),
-        liked: false
-      };
-      
-      setSocialFeed(prev => [post, ...prev]);
-      
-      toast({
-        title: "Achievement Shared!",
-        description: "Your achievement has been shared with the community!",
+        post_type: 'achievement',
+        achievement_data: achievement
       });
+      
+      if (success) {
+        refresh(); // Refresh data to show new post
+        toast({
+          title: "Achievement Shared!",
+          description: "Your achievement has been shared with the community!",
+        });
+      } else {
+        throw new Error('Failed to share achievement');
+      }
     } catch (error) {
       toast({
         title: "Error", 
@@ -263,48 +81,61 @@ export const CommunityHub = ({ userId }: CommunityHubProps) => {
     }
   };
 
-  const createPost = async () => {
+  const handleCreatePost = async () => {
     if (!newPostContent.trim()) return;
     
     try {
-      const post: SocialPost = {
-        id: Date.now().toString(),
-        userId,
-        userName: "You",
-        avatar: "/avatars/current-user.png",
+      console.log('Creating post with userId:', userId);
+      console.log('Post content:', newPostContent);
+      
+      const success = await createPost({
+        user_id: userId,
         content: newPostContent,
-        likes: 0,
-        comments: 0,
-        timestamp: new Date(),
-        liked: false
-      };
-      
-      setSocialFeed(prev => [post, ...prev]);
-      setNewPostContent("");
-      
-      toast({
-        title: "Post Created!",
-        description: "Your post has been shared with the community!",
+        post_type: 'general'
       });
+      
+      console.log('Create post result:', success);
+      
+      if (success) {
+        setNewPostContent("");
+        refresh(); // Refresh data to show new post
+        toast({
+          title: "Post Created!",
+          description: "Your post has been shared with the community!",
+        });
+      } else {
+        throw new Error('Failed to create post');
+      }
     } catch (error) {
+      console.error('handleCreatePost error:', error);
       toast({
         title: "Error",
-        description: "Failed to create post.",
+        description: "Failed to create post. Please try again.",
         variant: "destructive"
       });
     }
   };
 
   const toggleLike = async (postId: string) => {
-    setSocialFeed(prev => prev.map(post =>
-      post.id === postId
-        ? {
-            ...post,
-            liked: !post.liked,
-            likes: post.liked ? post.likes - 1 : post.likes + 1
-          }
-        : post
-    ));
+    const post = socialFeed.find(p => p.id === postId);
+    if (!post) return;
+
+    try {
+      if (post.user_liked) {
+        await unlikePost(postId, userId);
+      } else {
+        await likePost(postId, userId);
+      }
+      // Refresh the data to show updated like status
+      refresh();
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update like status.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -367,30 +198,30 @@ export const CommunityHub = ({ userId }: CommunityHubProps) => {
             <h3 className="text-lg font-semibold mb-4">Top Eco Champions</h3>
             <div className="space-y-4">
               {leaderboard.map((entry, index) => (
-                <div key={entry.userId} className={`flex items-center gap-4 p-4 rounded-lg ${
-                  entry.userId === userId ? 'bg-primary/10 border-2 border-primary/20' : 'bg-accent/5'
+                <div key={entry.id} className={`flex items-center gap-4 p-4 rounded-lg ${
+                  entry.id === userId ? 'bg-primary/10 border-2 border-primary/20' : 'bg-accent/5'
                 }`}>
                   <div className="text-2xl font-bold text-muted-foreground w-8">
                     #{index + 1}
                   </div>
                   
                   <Avatar>
-                    <AvatarImage src={entry.avatar} />
-                    <AvatarFallback>{entry.userName.slice(0, 2).toUpperCase()}</AvatarFallback>
+                    <AvatarImage src={entry.avatar_url || '/avatars/default.png'} />
+                    <AvatarFallback>{(entry.display_name || entry.username).slice(0, 2).toUpperCase()}</AvatarFallback>
                   </Avatar>
                   
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <h4 className="font-medium text-foreground">{entry.userName}</h4>
-                      <Badge variant="outline">{entry.badge}</Badge>
+                      <h4 className="font-medium text-foreground">{entry.display_name || entry.username}</h4>
+                      <Badge variant="outline">{entry.badges[0] || '🌱 Eco Warrior'}</Badge>
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      Level {entry.level} • {entry.co2Saved}kg CO₂ saved • {entry.streak} day streak
+                      Level {entry.level} • {entry.co2_saved}kg CO₂ saved • {entry.streak_days} day streak
                     </div>
                   </div>
                   
                   <div className="text-right">
-                    <div className="text-lg font-bold text-primary">{entry.score.toLocaleString()}</div>
+                    <div className="text-lg font-bold text-primary">{entry.eco_score.toLocaleString()}</div>
                     <div className="text-xs text-muted-foreground">Eco Points</div>
                   </div>
                 </div>
@@ -413,21 +244,25 @@ export const CommunityHub = ({ userId }: CommunityHubProps) => {
                 
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span>Progress: {challenge.currentProgress}/{challenge.goal}</span>
-                    <span>{Math.round((challenge.currentProgress / challenge.goal) * 100)}%</span>
+                    <span>Progress: {challenge.current_progress}/{challenge.goal}</span>
+                    <span>{Math.round((challenge.current_progress / challenge.goal) * 100)}%</span>
                   </div>
-                  <Progress value={(challenge.currentProgress / challenge.goal) * 100} className="h-2" />
+                  <Progress value={(challenge.current_progress / challenge.goal) * 100} className="h-2" />
                   
                   <div className="flex justify-between items-center pt-2">
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Users className="h-4 w-4" />
-                        {challenge.participants} participants
+                        {challenge.participants || 0} participants
                       </span>
-                      <span>Ends: {challenge.endDate.toLocaleDateString()}</span>
+                      <span>Ends: {new Date(challenge.end_date).toLocaleDateString()}</span>
                     </div>
-                    <Button onClick={() => joinChallenge(challenge.id)} size="sm">
-                      Join Challenge
+                    <Button 
+                      onClick={() => handleJoinChallenge(challenge.id)} 
+                      size="sm"
+                      disabled={challenge.user_joined}
+                    >
+                      {challenge.user_joined ? 'Joined' : 'Join Challenge'}
                     </Button>
                   </div>
                   
@@ -455,7 +290,7 @@ export const CommunityHub = ({ userId }: CommunityHubProps) => {
                     onChange={(e) => setNewPostContent(e.target.value)}
                   />
                   <div className="flex justify-end">
-                    <Button onClick={createPost} disabled={!newPostContent.trim()}>
+                    <Button onClick={handleCreatePost} disabled={!newPostContent.trim()}>
                       <Share2 className="h-4 w-4 mr-2" />
                       Share
                     </Button>
@@ -469,37 +304,37 @@ export const CommunityHub = ({ userId }: CommunityHubProps) => {
               <Card key={post.id} className="p-4">
                 <div className="flex gap-3">
                   <Avatar>
-                    <AvatarImage src={post.avatar} />
-                    <AvatarFallback>{post.userName.slice(0, 2).toUpperCase()}</AvatarFallback>
+                    <AvatarImage src={post.user_profile?.avatar_url} />
+                    <AvatarFallback>{post.user_profile?.username?.slice(0, 2).toUpperCase() || 'U'}</AvatarFallback>
                   </Avatar>
                   
                   <div className="flex-1 space-y-3">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-medium text-foreground">{post.userName}</h4>
+                        <h4 className="font-medium text-foreground">{post.user_profile?.username}</h4>
                         <span className="text-xs text-muted-foreground">
-                          {post.timestamp.toLocaleDateString()}
+                          {new Date(post.created_at).toLocaleDateString()}
                         </span>
                       </div>
                       <p className="text-foreground">{post.content}</p>
                     </div>
                     
-                    {post.achievement && (
+                    {post.achievement_data && (
                       <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                         <div className="flex items-center gap-2">
-                          <span className="text-2xl">{post.achievement.icon}</span>
+                          <span className="text-2xl">🏆</span>
                           <span className="font-medium text-yellow-800">
-                            Achievement: {post.achievement.title}
+                            Achievement: {post.achievement_data.title || 'Achievement unlocked!'}
                           </span>
                         </div>
                       </div>
                     )}
                     
-                    {post.activity && (
+                    {post.activity_data && (
                       <div className="p-3 bg-green-50 rounded-lg border border-green-200">
                         <div className="flex items-center justify-between">
-                          <span className="font-medium text-green-800">{post.activity.type}</span>
-                          <span className="text-sm text-green-600">{post.activity.impact}</span>
+                          <span className="font-medium text-green-800">{post.activity_data.type || 'Eco Activity'}</span>
+                          <span className="text-sm text-green-600">{post.activity_data.co2_saved || post.activity_data.impact || 'Positive impact!'}</span>
                         </div>
                       </div>
                     )}
@@ -509,14 +344,14 @@ export const CommunityHub = ({ userId }: CommunityHubProps) => {
                         variant="ghost" 
                         size="sm"
                         onClick={() => toggleLike(post.id)}
-                        className={post.liked ? 'text-red-500' : ''}
+                        className={post.user_liked ? 'text-red-500' : ''}
                       >
-                        <Heart className={`h-4 w-4 mr-1 ${post.liked ? 'fill-current' : ''}`} />
-                        {post.likes}
+                        <Heart className={`h-4 w-4 mr-1 ${post.user_liked ? 'fill-current' : ''}`} />
+                        {post.likes_count}
                       </Button>
                       <Button variant="ghost" size="sm">
                         <MessageCircle className="h-4 w-4 mr-1" />
-                        {post.comments}
+                        {post.comments_count}
                       </Button>
                     </div>
                   </div>

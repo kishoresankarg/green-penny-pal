@@ -2,7 +2,6 @@ import { DashboardHeader } from "@/components/DashboardHeader";
 import { ActivityLogger } from "@/components/ActivityLogger";
 import { EcoSuggestions } from "@/components/EcoSuggestions";
 import { ProgressTracker } from "@/components/ProgressTracker";
-import DatabaseConnectionTest from "@/components/DatabaseConnectionTest";
 import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
@@ -13,9 +12,6 @@ const Index = () => {
   return (
     <div className="space-y-8">
       <DashboardHeader userId={user.id} onSignOut={() => {}} />
-
-      {/* Database Connection Test */}
-      <DatabaseConnectionTest />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-6">
